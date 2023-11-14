@@ -50,6 +50,13 @@ public class MailboxDMAP implements Runnable{
             while (!quit) {
                 String request = reader.readLine();
                 System.out.println(Thread.currentThread() + ": reporting request: [" + request + "], on socket: " + socket);
+
+                if(request == null){
+                    socket.close();
+                    quit = true;
+                    break;
+                }
+
                 String[] requests = request.split("\\s");
                 String response = handleRequest(requests);
                 writer.println(response);

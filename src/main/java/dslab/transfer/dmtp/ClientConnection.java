@@ -48,7 +48,9 @@ public class ClientConnection implements Runnable{
                 System.out.println(Thread.currentThread() + ": reporting request: [" + request + "], on socket: " + socket);
 
                 if(request == null){
-                    continue;
+                    socket.close();
+                    quit = true;
+                    break;
                 }
 
                 String[] requests = request.split("\\s");
