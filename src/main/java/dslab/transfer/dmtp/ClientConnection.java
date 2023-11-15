@@ -11,10 +11,7 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.Socket;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Objects;
+import java.util.*;
 
 public class ClientConnection implements Runnable{
 
@@ -206,7 +203,10 @@ public class ClientConnection implements Runnable{
             }
             if (domainLookup(adressData[1])) {
                 if (sentDomains.get(adressData[1]) == 1) {
-                    sendMail(adressData[1]);
+                    String temp = sendMail(adressData[1]);
+                    if(temp.equals("domain not available")){
+                        remailOnTheSender(email.getFromAdress());
+                    }
                     sentDomains.put(adressData[1], 2);
                 }
             } else {
@@ -223,11 +223,18 @@ public class ClientConnection implements Runnable{
 
         this.email = remailingMail;
 
-        sendMail(splitFrom[1]);
+        String message = sendMail(splitFrom[1]);
     }
 
-    private void sendMail(String domain){
-        String[] hostAndPort = domainsConfig.getString(domain).split(":");
+    private String sendMail(String domain){
+        String[] hostAndPort = new String[0];
+
+        try{
+            hostAndPort = domainsConfig.getString(domain).split(":");
+        } catch (MissingResourceException m){
+            return "error no domain with such name";
+        }
+
         try{
             System.out.println(hostAndPort[0] + " " + hostAndPort[1]);
 
@@ -249,7 +256,7 @@ public class ClientConnection implements Runnable{
             System.out.println(message);
 
             if(message.contains("erorr")){
-                // cannot happen essentially hhhhh
+                // cannot happen essentially
             }
 
             writer.write("subject " + email.getSubject() + "\r\n");
@@ -275,10 +282,12 @@ public class ClientConnection implements Runnable{
             mailboxSocket.close();
 
         } catch (IOException e) {
-            System.out.println("IOException " + e.getMessage());
+            System.out.println("IOException " + e.getMessage() + ", socket closed");
+            return "domain not available";
         }
 
         sendDataToMonitoring(this.email.getFromAdress());
+        return "ok";
     }
 
     private void sendDataToMonitoring(String fromAdress) {
