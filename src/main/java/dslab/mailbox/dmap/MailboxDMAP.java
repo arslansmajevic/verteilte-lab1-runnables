@@ -63,6 +63,8 @@ public class MailboxDMAP implements Runnable{
                 writer.flush();
 
                 if(Objects.equals(response, "ok bye") || Objects.equals(response, "error on protocol")){
+                    writer.close();
+                    reader.close();
                     socket.close();
                 }
             }

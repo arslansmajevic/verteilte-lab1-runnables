@@ -56,6 +56,8 @@ public class ClientConnection implements Runnable{
                 writer.flush();
 
                 if (response.equals("ok bye") || response.equals("error protocol")) {
+                    writer.close();
+                    reader.close();
                     socket.close();
                 }
             }
@@ -279,6 +281,8 @@ public class ClientConnection implements Runnable{
             writer.write("quit" + "\r\n");
             writer.flush();
 
+            writer.close();
+            reader.close();
             mailboxSocket.close();
 
         } catch (IOException e) {

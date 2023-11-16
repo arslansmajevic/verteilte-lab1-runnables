@@ -57,6 +57,8 @@ public class MailboxDMTP implements Runnable{
                 writer.flush();
 
                 if (response.equals("ok bye") || response.equals("error protocol")) {
+                    writer.close();
+                    reader.close();
                     socket.close();
                 }
             }
