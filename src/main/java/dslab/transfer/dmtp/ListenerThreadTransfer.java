@@ -14,7 +14,7 @@ public class ListenerThreadTransfer implements Runnable{
 
     private ServerSocket serverSocket;
     private Config config;
-    private ExecutorService pool = Executors.newFixedThreadPool(2);
+    private ExecutorService pool = Executors.newFixedThreadPool(20);
     private int emailId = 1;
 
     public ListenerThreadTransfer(ServerSocket serverSocket, Config config) {
